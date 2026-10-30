@@ -31,16 +31,24 @@ class DataWorker(QtCore.QThread):
     def run(self):
         # 关键：QThread 内使用独立的数据库连接，避免 SQLite 跨线程报错
         db = Database(self.db_path)
+        total_rows = 0
         try:
             for tf in TIMEFRAME_ORDER:
                 if self.mode == "download":
-                    rows = fetch_okx(tf, years=self.years,
-                                    progress_cb=lambda d, t: self.progress.emit(tf, d, t))
+                    # years=None 表示按周期取 HISTORY_YEARS_PER_TF（密集周期更短，下载更快）
+                    rows = fetch_okx(tf, years=None,
+                                    progress_cb=lambda d, t, _tf=tf: self.progress.emit(_tf, d, t))
                 else:
                     rows = generate_sample(tf, years=self.years)
                 db.save_batch(tf, rows)
+                total_rows += len(rows)
                 self.progress.emit(tf, 1, 1)
-            self.finished.emit(True, "数据准备完成")
+
+            if self.mode == "download" and total_rows == 0:
+                self.finished.emit(
+                    False, "未获取到任何数据：请确认 VPN/网络已连接 OKX，稍后重试")
+            else:
+                self.finished.emit(True, f"数据准备完成，共 {total_rows:,} 根 K 线")
         except Exception as e:  # 网络失败等
             self.finished.emit(False, f"数据获取失败：{e}")
         finally:

@@ -24,6 +24,22 @@ TIMEFRAME_ORDER = ["5m", "15m", "30m", "1H", "4H", "1D"]
 # 技术指标
 EMA_PERIOD = 20
 
+# ---- 下载性能（OKX 公共接口 rate limit：history-candles 约 20 次/2 秒）----
+DOWNLOAD_WORKERS = 12          # 并发线程数，用于隐藏 VPN/网络的往返延迟
+DOWNLOAD_RATE_PER_SEC = 8.0    # 全局限速（次/秒），留出余量避免触发 429
+
+# ---- 各周期抓取的历史长度（年）。None 表示使用上面的 HISTORY_YEARS（默认 3 年）----
+# 数据量差异极大：3 年 5m ≈ 31.5 万根（≈3300 页），1 年 5m 仅 ≈1100 页。
+# 默认给密集周期更短历史，下载会快数倍；想全部抓满 3 年就把对应值改成 None。
+HISTORY_YEARS_PER_TF = {
+    "5m":  0.5,
+    "15m": 1.0,
+    "30m": 2.0,
+    "1H":  3.0,
+    "4H":  3.0,
+    "1D":  3.0,
+}
+
 # OKX 公开行情接口（无需鉴权）
 OKX_CANDLES_URL = "https://www.okx.com/api/v5/market/candles"
 OKX_HISTORY_URL = "https://www.okx.com/api/v5/market/history-candles"
