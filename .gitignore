@@ -1,0 +1,36 @@
+# ===== Python 环境 / 缓存（非源码，不入库） =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+ENV/
+
+# ===== 运行时生成的数据（本地数据，不入库） =====
+# 53MB 的本地行情数据库（首次运行会自动抓取/生成示例，无需提交）
+kline_data.db
+kline_data.db-wal
+kline_data.db-shm
+# 用户绘图记录（运行时 JSON）
+drawings.json
+# 离屏预览截图
+preview_dark.png
+preview_light.png
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+
+# ===== 项目内部数据（WorkBuddy 记忆，勿上传） =====
+.workbuddy/
